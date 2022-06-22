@@ -15,10 +15,18 @@ class ReactViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            #serializer.save()
-            context ={
+            # serializer.save()
+            try:
+                file_name = request.FILES['file'].name
+            except:
+                context = {
+                    'status': False,
+                    'message': 'No uploaded file'
+                }
+                return Response(context, status.HTTP_200_OK)
+            context = {
                 'status': True,
-                'message': 'Successfully uploaded file'
+                'message': f'Successfully uploaded file {file_name}'
             }
             return Response(context, status.HTTP_201_CREATED)
         else:
@@ -26,4 +34,4 @@ class ReactViewSet(viewsets.ModelViewSet):
                 'status': False,
                 'message': serializer.errors
             }
-            return  Response(context, status.HTTP_200_OK)
+            return Response(context, status.HTTP_200_OK)

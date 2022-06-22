@@ -16,14 +16,7 @@ class ReactViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             # serializer.save()
-            try:
-                file_name = request.FILES['file'].name
-            except:
-                context = {
-                    'status': False,
-                    'message': 'No uploaded file'
-                }
-                return Response(context, status.HTTP_200_OK)
+            file_name = request.FILES['file'].name
             context = {
                 'status': True,
                 'message': f'Successfully uploaded file {file_name}'
@@ -34,4 +27,4 @@ class ReactViewSet(viewsets.ModelViewSet):
                 'status': False,
                 'message': serializer.errors
             }
-            return Response(context, status.HTTP_200_OK)
+            return Response(context, status.HTTP_422_UNPROCESSABLE_ENTITY)

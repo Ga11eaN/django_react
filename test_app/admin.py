@@ -4,7 +4,7 @@ from .models import React
 
 
 class ReactAdmin(admin.ModelAdmin):
-    list_display = ('name', 'number')
+    list_display = ('name', 'number', 'file')
 
 
 admin.site.register(React, ReactAdmin)

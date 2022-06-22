@@ -25,6 +25,6 @@ class ReactViewSet(viewsets.ModelViewSet):
         else:
             context = {
                 'status': False,
-                'message': serializer.errors
+                'errors': serializer.errors
             }
             return Response(context, status.HTTP_422_UNPROCESSABLE_ENTITY)

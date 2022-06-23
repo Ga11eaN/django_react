@@ -1,8 +1,21 @@
 from rest_framework import serializers
-from .models import React
+from .models import ExcelFile, Sftp
 
 
-class ReactSerializer(serializers.ModelSerializer):
+class ExcelFileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = React
-        fields = ('name', 'number', 'file')
+        model = ExcelFile
+        fields = ('file',)
+
+
+class SftpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sftp
+        fields = (
+            'host_name',
+            'port',
+            'username',
+            'password',
+            'key',
+            'upload_path'
+        )

@@ -1,10 +1,15 @@
 from django.contrib import admin
-from .models import React
+from .models import ExcelFile, Sftp
 # Register your models here.
 
 
-class ReactAdmin(admin.ModelAdmin):
-    list_display = ('name', 'number', 'file')
+class ExcelFileAdmin(admin.ModelAdmin):
+    list_display = ('file',)
 
 
-admin.site.register(React, ReactAdmin)
+class SftpAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(ExcelFile, ExcelFileAdmin)
+admin.site.register(Sftp, SftpAdmin)

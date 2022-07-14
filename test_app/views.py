@@ -3,6 +3,7 @@ from .serializers import ExcelFileSerializer, SftpSerializer
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
+from django.contrib.sessions.backends.db import SessionStore
 
 
 class ExcelFileViewSet(viewsets.ModelViewSet):
@@ -18,10 +19,14 @@ class ExcelFileViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             # serializer.save()
+            s = SessionStore()
+            s['file_name'] = serializer.validated_data['file'].name
+            s.create()
             file_name = serializer.validated_data['file'].name
             context = {
                 'status': True,
-                'message': f'Successfully uploaded file {file_name}'
+                'message': f'Successfully uploaded file {s["file_name"]}',
+                'session_key': s.session_key
             }
             return Response(context, status.HTTP_201_CREATED)
         else:
@@ -39,6 +44,7 @@ class SftpViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = SftpSerializer
     parser_classes = (MultiPartParser,)
+    key = 'No_Data'
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -57,3 +63,6 @@ class SftpViewSet(viewsets.ModelViewSet):
                 'errors': serializer.errors
             }
             return Response(context, status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    def list(self, request, *args, **kwargs):
+        self.key = 'key'

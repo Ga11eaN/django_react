@@ -66,3 +66,4 @@ class SftpViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         self.key = 'key'
+        return Response({}, status.HTTP_200_OK)

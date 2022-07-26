@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'test_app.apps.TestAppConfig',
+    'pgp.apps.PgpConfig',
     'rest_framework',
     'corsheaders'
 ]

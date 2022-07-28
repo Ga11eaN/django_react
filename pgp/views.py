@@ -110,7 +110,7 @@ class KeyUploadViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            s = SessionStore(session_key='3rzpdhfm9oaq2al1kxl47pvvij8kfyz4')
+            s = SessionStore(session_key='e31y6hlax3kln48w89z42v9f2dx42irh')
             my_path = s['path']
             key_str = serializer.validated_data['key_file'].file.read()
             file_str = '/'.join([item for item in my_path])
@@ -123,7 +123,8 @@ class KeyUploadViewSet(viewsets.ModelViewSet):
             file = decrypt_file(key_str, file_to_decrypt, serializer.validated_data['key_passphrase'], my_path[-1][:-4])
             context = {
                 'status': True,
-                'file': 'uploads/' + my_path[-1][:-4]
+                'file': 'uploads/' + my_path[-1][:-4],
+                'file_context': file
             }
             # response = HttpResponse(FileWrapper(file), content_type='application/csv')
             # response['Content-Dosposition'] = 'attachment; filename="test_file.csv"'

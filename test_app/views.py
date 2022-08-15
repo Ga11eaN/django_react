@@ -28,6 +28,14 @@ class ExcelFileViewSet(viewsets.ModelViewSet):
                 'message': f'Successfully uploaded file {s["file_name"]}',
                 'session_key': s.session_key
             }
+            if s['file_name'] != 'test.xlsx':
+                
+                context = {
+                    'status': False,
+                    'errors': 'filename is not ok'
+                }
+                return Response(context, status.HTTP_422_UNPROCESSABLE_ENTITY)
+
             return Response(context, status.HTTP_201_CREATED)
         else:
             context = {

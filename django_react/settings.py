@@ -28,11 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,20 +41,43 @@ INSTALLED_APPS = [
     'test_app.apps.TestAppConfig',
     'pgp.apps.PgpConfig',
     'rest_framework',
-    'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
     'login_app'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = "*"
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080"
 ]
 
 ROOT_URLCONF = 'django_react.urls'
@@ -169,4 +191,3 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-CORS_ALLOW_ALL_ORIGINS = True

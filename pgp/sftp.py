@@ -36,13 +36,15 @@ def download_file(host_name, port, username, password, path):
                    look_for_keys=False
                    )
     sftp = client.open_sftp()
-    file = sftp.open(path, 'rb')
+    file = sftp.open(path, 'rb').read()
+    sftp.close()
     return file
 
-# result = connect(host_name='198.19.243.251',
+
+# result = download_file(host_name='198.19.243.251',
 #                  port=2222,
 #                  username='tester',
 #                  password='password',
-#                  dir='test_folder/test_test_folder')
+#                  path="inbox\ELIG_FRAMPTONCONSTRUCTION_20210611_Sample.CSV.gpg")
 #
-# print(result)
+# print(result.read())

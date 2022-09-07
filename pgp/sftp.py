@@ -26,7 +26,7 @@ def connect(host_name, port, username, password, dir=''):
     return list_of_objects
 
 
-def download_file(host_name, port, username, password, path):
+def download_file(host_name, port, username, password, path, file_name):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(hostname=host_name,
@@ -36,8 +36,7 @@ def download_file(host_name, port, username, password, path):
                    look_for_keys=False
                    )
     sftp = client.open_sftp()
-    file = sftp.open(path, 'rb')
-    return file
+    sftp.get(path, file_name)
 
 # result = connect(host_name='198.19.243.251',
 #                  port=2222,

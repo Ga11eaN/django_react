@@ -13,4 +13,5 @@ class Sftp(models.Model):
     username = models.CharField(max_length=20,blank=False)
     password = models.CharField(max_length=20, default='')
     key = models.FileField(validators=[FileExtensionValidator(['', 'pem'])], blank=False)
+    key_passphrase = models.CharField(max_length=50)
     upload_path = models.CharField(max_length=100)

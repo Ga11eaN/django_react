@@ -84,19 +84,26 @@ def browse_sftp(request):
                 context = {
                     'status': True,
                     'list_of_objects': result,
-                    'path': my_path,
+                    'path': '/'.join([item for item in my_path]),
                     'session_key': serializer.validated_data['session_key']
                 }
             else:
                 my_path.append(serializer.validated_data['name'])
                 s['path'] = my_path
                 s.save()
+                download_file(host_name=s['host_name'],
+                              port=s['port'],
+                              username=s['username'],
+                              password=s['password'],
+                              path='/'.join([item for item in my_path]),
+                              file_name=serializer.validated_data['name'])
                 context = {
                     'status': True
                 }
         else:
             context = {
                 'status': False,
+
                 'errors': serializer.errors
             }
         return Response(context, status.HTTP_200_OK)
@@ -110,7 +117,7 @@ class KeyUploadViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            s = SessionStore(session_key='e31y6hlax3kln48w89z42v9f2dx42irh')
+            s = SessionStore(session_key=serializer.validated_data['session_key'])
             my_path = s['path']
             key_str = serializer.validated_data['key_file'].file.read()
             file_str = '/'.join([item for item in my_path])
@@ -136,3 +143,5 @@ class KeyUploadViewSet(viewsets.ModelViewSet):
                 'errors': serializer.errors
             }
             return Response(context, status.HTTP_404_NOT_FOUND)
+
+

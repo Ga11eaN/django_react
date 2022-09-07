@@ -17,5 +17,6 @@ class SftpSerializer(serializers.ModelSerializer):
             'username',
             'password',
             'key',
+            'key_passphrase',
             'upload_path'
         )

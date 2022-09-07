@@ -1,12 +1,15 @@
-from .models import SftpConnection, KeyUpload
-from .serializers import SftpConnectionSerializer, KeyUploadSerializer, BrowseSerializer
-from .sftp import connect, download_file
-from .file_encryption import decrypt_file
+import os
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.sessions.backends.db import SessionStore
+from django.http import HttpResponse
+
+from .models import SftpConnection, KeyUpload
+from .serializers import SftpConnectionSerializer, KeyUploadSerializer, BrowseSerializer
+from .sftp import connect, download_file
+from .file_encryption import decrypt_file
 
 
 class SftpConnectionViewSet(viewsets.ModelViewSet):
@@ -35,6 +38,9 @@ class SftpConnectionViewSet(viewsets.ModelViewSet):
                     'list_of_objects': result,
                     'session_key': s.session_key
                 }
+                my_dir = './uploads/'
+                for f in os.listdir(my_dir):
+                    os.remove(os.path.join(my_dir, f))
                 return Response(context, status.HTTP_200_OK)
             except Exception as e:
                 context = {
@@ -110,29 +116,47 @@ class KeyUploadViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            s = SessionStore(session_key='e31y6hlax3kln48w89z42v9f2dx42irh')
+            s = SessionStore(session_key=serializer.validated_data['session_key'])
             my_path = s['path']
-            key_str = serializer.validated_data['key_file'].file.read()
+            # key_str = serializer.validated_data['key_file'].file.read()
             file_str = '/'.join([item for item in my_path])
-            file_to_decrypt = download_file(host_name=s['host_name'],
-                                            port=s['port'],
-                                            username=s['username'],
-                                            password=s['password'],
-                                            path=file_str,
-                                            ).read()
-            file = decrypt_file(key_str, file_to_decrypt, serializer.validated_data['key_passphrase'], my_path[-1][:-4])
-            context = {
-                'status': True,
-                'file': 'uploads/' + my_path[-1][:-4],
-                'file_context': file
-            }
-            # response = HttpResponse(FileWrapper(file), content_type='application/csv')
-            # response['Content-Dosposition'] = 'attachment; filename="test_file.csv"'
-            # os.remove('output.csv')
-            return Response(context, status.HTTP_200_OK)
+            try:
+                file_to_decrypt = download_file(host_name=s['host_name'],
+                                                port=s['port'],
+                                                username=s['username'],
+                                                password=s['password'],
+                                                path=file_str)
+            # file = decrypt_file(key_str, file_to_decrypt, serializer.validated_data['key_passphrase'], my_path[-1][:-4])
+                with open(f'./uploads/{my_path[-1]}', 'bw') as f:
+                    f.write(file_to_decrypt)
+                if serializer.validated_data['key_file'].name != 'test_key.txt':
+                    raise ValueError("Wrong file name")
+                context = {
+                    'status': True,
+                    'file': 'uploads/' + my_path[-1][:-4]
+                }
+                return Response(context, status.HTTP_200_OK)
+            except Exception as ex:
+                context = {
+                    'status': False,
+                    'file': 'uploads/' + my_path[-1][:-4],
+                    'errors': ex.__str__()
+                }
+                return Response(context, status.HTTP_422_UNPROCESSABLE_ENTITY)
         else:
             context = {
                 'status': False,
                 'errors': serializer.errors
             }
             return Response(context, status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+def download_file_to_pc(request):
+    if request.method == 'GET':
+        s = SessionStore(session_key=request.data['session_key'])
+        my_file = open(f'./uploads/{s["path"][-1]}', 'rb')
+        response = HttpResponse(my_file)
+        file_name = s["path"][-1]
+        response['Content-Disposition'] = f'attachment; filename={file_name}'
+        return response

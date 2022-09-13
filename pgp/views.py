@@ -116,7 +116,7 @@ class KeyUploadViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            s = SessionStore(session_key=serializer.validated_data['session_key'])
+            s = SessionStore(session_key=request.data['session_key'])
             my_path = s['path']
             # key_str = serializer.validated_data['key_file'].file.read()
             file_str = '/'.join([item for item in my_path])
@@ -151,9 +151,9 @@ class KeyUploadViewSet(viewsets.ModelViewSet):
             return Response(context, status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def download_file_to_pc(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         s = SessionStore(session_key=request.data['session_key'])
         my_file = open(f'./uploads/{s["path"][-1]}', 'rb')
         response = HttpResponse(my_file)

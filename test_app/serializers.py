@@ -19,5 +19,7 @@ class SftpSerializer(serializers.ModelSerializer):
             'ssh_check',
             'key',
             'key_passphrase',
+            'encryption_check',
+            'encryption_key',
             'upload_path'
         )

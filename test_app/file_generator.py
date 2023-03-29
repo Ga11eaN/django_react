@@ -240,3 +240,8 @@ def create_str(header: list, values: dict) -> str:
         else:
             my_str += '|'
     return my_str
+
+
+# optional file encryption
+def encrypt_file(filename):
+    return filename

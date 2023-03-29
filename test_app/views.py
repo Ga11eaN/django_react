@@ -1,4 +1,4 @@
-from .file_generator import file_parse
+from .file_generator import file_parse, encrypt_file
 from .serializers import ExcelFileSerializer, SftpSerializer
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
@@ -74,6 +74,9 @@ class SftpViewSet(viewsets.ModelViewSet):
                 key_passphrase = serializer.validated_data['key_passphrase']
             s = SessionStore(session_key=request.data['session_key'])
             filename = s['file_name']
+            encryption_check = serializer.validated_data['encryption_check']
+            if encryption_check:
+                filename = encrypt_file(filename)
             try:
                 if ssh_check:
                     sftp_key_upload(host_name, port, username, password, key_file,

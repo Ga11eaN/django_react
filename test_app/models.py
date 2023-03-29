@@ -15,4 +15,6 @@ class Sftp(models.Model):
     ssh_check = models.BooleanField(default='', blank=True)
     key = models.FileField(validators=[FileExtensionValidator(['', 'pem'])], blank=True)
     key_passphrase = models.CharField(max_length=50, default='', blank=True)
+    encryption_check = models.BooleanField(default='', blank=True)
+    encryption_key = models.FileField(blank=True)
     upload_path = models.CharField(max_length=100, default='/inbox/', blank=True)
